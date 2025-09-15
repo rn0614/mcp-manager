@@ -1,0 +1,235 @@
+# MCP 설정 관리 페이지 PRD
+
+## 📋 개요
+MCP 설정 관리 페이지는 MCP 서버, 카테고리, 설정 타겟의 통합 관리 인터페이스를 제공합니다.
+
+## 🗂️ 데이터 구조
+
+### 1️⃣ MCP 서버 데이터 (MCPServer)
+```typescript
+interface MCPServer {
+  id: string;              // 고유 식별자
+  name: string;            // 서버 이름 (예: "supabase", "filesystem")
+  command: string;         // 실행 명령어 (예: "docker", "npx")
+  args: string[];          // 명령어 인수 배열
+  description: string;     // 서버 설명
+  version: number;         // 버전 관리
+  delYn: boolean;         // 삭제 여부 (Soft Delete)
+  createdAt: Date;        // 생성일시
+  updatedAt: Date;        // 수정일시
+}
+```
+
+**샘플 서버 데이터:**
+- `supabase`: Supabase 데이터베이스 연동
+- `shadcn`: Shadcn UI 컴포넌트 관리
+- `context7`: 컨텍스트 관리 서버
+- `filesystem`: 파일시스템 접근
+- `sqlite`: SQLite 데이터베이스
+
+### 2️⃣ MCP 카테고리 데이터 (MCPCategory)
+```typescript
+interface MCPCategory {
+  id: string;              // 고유 식별자
+  name: string;            // 카테고리 이름 (예: "개발", "분석")
+  description: string;     // 카테고리 설명
+  icon: string;           // 아이콘 이름 (Lucide React)
+  target: string;         // 대상 타겟 ID (claude/cursor/all/custom)
+  isActive: boolean;      // 활성 상태
+  version: number;        // 버전 관리
+  delYn: boolean;         // 삭제 여부
+  createdAt: Date;        // 생성일시
+  updatedAt: Date;        // 수정일시
+}
+```
+
+**카테고리 예시:**
+- `개발`: 개발 관련 MCP 서버들 (target: 'all')
+- `데이터 분석`: 데이터 분석용 서버들 (target: 'claude')
+- `UI 작업`: UI 관련 도구들 (target: 'cursor')
+
+### 3️⃣ 설정 타겟 데이터 (MCPConfigTarget)
+```typescript
+interface MCPConfigTarget {
+  id: string;              // 고유 식별자 (고정: 'claude', 'cursor', 동적생성)
+  name: string;     // 표시명 ("Claude Desktop", "Cursor")
+  configPath: string;      // 설정 파일 경로
+  isBuiltIn: boolean;     // 기본 제공 타겟 여부
+  version: number;        // 버전 관리
+  delYn: boolean;         // 삭제 여부
+  createdAt: Date;        // 생성일시
+  updatedAt: Date;        // 수정일시
+}
+```
+
+**기본 설정 타겟:**
+- `claude`: Claude Desktop (id: 'claude')
+- `cursor`: Cursor (id: 'cursor')
+- 사용자 정의 타겟들 (VS Code, Zed 등)
+
+## 🏗️ 현재 구현 상태
+
+### ✅ 구현 완료
+1. **ConfigTargetManagement**: 설정 타겟 CRUD 관리
+2. **ConfigPathForm**: 설정 파일 경로 관리
+3. **데이터 타입 정의**: 완전한 TypeScript 인터페이스
+4. **API 연동**: Electron IPC 통신
+
+### ❌ 미구현 (요구사항)
+1. **MCP 서버 데이터 표시**: 현재 설정 관리 페이지에 서버 목록이 없음
+2. **카테고리 데이터 표시**: 카테고리 정보 및 통계가 표시되지 않음
+3. **통합 대시보드**: 3개 데이터의 연관 관계 시각화
+
+## 📊 추가 구현 필요 컴포넌트
+
+### 1️⃣ MCPServerOverview
+```typescript
+interface MCPServerOverviewProps {
+  servers: MCPServer[];
+  onRefresh: () => void;
+}
+```
+- 전체 MCP 서버 목록 표시
+- 서버별 상태 (활성/비활성)
+- 간단한 서버 정보 (이름, 설명, 명령어)
+
+### 2️⃣ MCPCategoryOverview  
+```typescript
+interface MCPCategoryOverviewProps {
+  categories: MCPCategory[];
+  configTargets: MCPConfigTarget[];
+  onRefresh: () => void;
+}
+```
+- 카테고리별 통계 (서버 개수, 대상 타겟)
+- 카테고리별 활성 상태
+- 타겟별 카테고리 분포
+
+### 3️⃣ MCPDataSummary
+```typescript
+interface MCPDataSummaryProps {
+  serverCount: number;
+  categoryCount: number;
+  targetCount: number;
+  activeCategories: Record<string, string>;
+}
+```
+- 전체 데이터 요약 카드
+- 타겟별 활성 카테고리 표시
+- 시스템 상태 개요
+
+## 🎯 개선 방향
+
+### 현재 페이지 구조:
+```
+MCP 설정 관리
+├── ConfigTargetManagement (설정 타겟 관리) ✅
+└── ConfigPathForm (경로 설정) ✅
+```
+
+### 제안하는 새로운 구조:
+```
+MCP 설정 관리
+├── MCPDataSummary (데이터 요약) 🆕
+├── MCPServerOverview (서버 개요) 🆕  
+├── MCPCategoryOverview (카테고리 개요) 🆕
+├── ConfigTargetManagement (설정 타겟 관리) ✅
+└── ConfigPathForm (경로 설정) ✅
+```
+
+## 🔗 데이터 연관 관계
+
+```
+MCPConfigTarget (설정 타겟)
+    ↓ (target 필드로 연결)
+MCPCategory (카테고리)
+    ↓ (CategoryServerRelation으로 연결)
+MCPServer (서버)
+```
+
+**예시 데이터 플로우:**
+1. `cursor` 타겟 → `개발` 카테고리 → `[filesystem, sqlite]` 서버들
+2. `claude` 타겟 → `분석` 카테고리 → `[supabase, context7]` 서버들
+3. `all` 타겟 → 모든 카테고리에서 사용 가능
+
+## ⚠️ 핵심 문제: ConfigTarget과 Category 매칭 이슈
+
+### 🔄 사용자 워크플로우
+```
+1. 사용자가 ConfigTarget 생성 (예: "VS Code", id: "1757859527672ezqkmvwyi") 
+2. Category 생성 시 target 선택
+3. ❌ 문제: Category의 target 필드와 ConfigTarget의 id가 매칭 안됨
+```
+
+### 🐛 현재 매칭 문제점
+
+**ConfigTarget 생성:**
+```typescript
+// 사용자가 "VS Code" 타겟 생성
+{
+  id: "1757859527672ezqkmvwyi",    // 동적 생성된 ID
+  name: "vscode",          // 사용자가 입력한 이름
+  configPath: "...",
+  isBuiltIn: false
+}
+```
+
+**Category 생성 시 문제:**
+```typescript
+// CategoryModal에서 target 선택할 때
+{
+  name: "VS Code 개발",
+  target: "???"  // 어떤 값이 들어가야 하는가?
+}
+```
+
+### 🔧 매칭 로직 분석
+
+**현재 트레이 메뉴 필터링:**
+```javascript
+// main.js에서
+const targetCategories = categories.filter(cat => 
+  cat.target === target.id ||  // ConfigTarget의 id와 비교
+  cat.target === 'all'
+);
+```
+
+**CategoryModal에서 타겟 선택:**
+```typescript
+// CategoryModal에서 availableTargets 로드
+const targets = Object.values(storeData.configTargets || {})
+  .filter((target: any) => !target.delYn);
+```
+
+### 💡 해결 방안
+
+#### Option 1: Category.target에 ConfigTarget.id 직접 저장
+```typescript
+// Category 생성 시
+{
+  name: "VS Code 개발",
+  target: "1757859527672ezqkmvwyi"  // ConfigTarget의 실제 ID
+}
+```
+
+#### Option 2: ConfigTarget.id를 고정/예측 가능하게 변경
+```typescript
+// ConfigTarget 생성 시 name 기반 ID 생성
+{
+  id: "vscode",  // name을 정규화한 ID
+  name: "vscode"
+}
+```
+
+### 🎯 권장 해결책: Option 1
+- CategoryModal에서 target 선택 시 ConfigTarget.id를 저장
+- 트레이 메뉴 필터링은 현재 로직 유지
+- 기존 데이터 구조 변경 최소화
+
+## 💡 구현 우선순위
+
+1. **CRITICAL**: ConfigTarget-Category 매칭 문제 해결
+2. **HIGH**: MCPDataSummary - 전체 현황 파악
+3. **MEDIUM**: MCPServerOverview - 서버 상태 관리
+4. **MEDIUM**: MCPCategoryOverview - 카테고리 분석
+5. **LOW**: 고급 필터링 및 검색 기능

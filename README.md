@@ -16,28 +16,28 @@
 ### 2. MCP를 사용하는 프로그램에 대한 경로 설정
 **2-1. json에서 한번에 가져오기**
  카테고리 가져오기란에서 json 설정파일을 붙여넣고 설정분석 클릭
-![](public/image/20250915130926EVZE-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130926EVZE-MCP 관리 툴 프로그램.png)
 
  밑에 쓰던 mcp에 대한 내용을 분석해서 가져옴.
  카테고리 생성 클릭시 신규 카테고리 생성
-![](public/image/20250915130926RkMN-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130926RkMN-MCP 관리 툴 프로그램.png)
 
-![](public/image/20250915130926SDeU-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130926SDeU-MCP 관리 툴 프로그램.png)
 
 
 ### 2-2. 각자 생성
 서버 관리에서 서버 추가 하여 개별생성
-![](public/image/20250915130926yUKf-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130926yUKf-MCP 관리 툴 프로그램.png)
 
 카테고리 관리에서 신규 카테고리 추가 생성
-![](public/image/20250915130926CSmm-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130926CSmm-MCP 관리 툴 프로그램.png)
 
 생성한 카테고리에서 서버를 추가 생성하기  
-![](public/image/20250915130926kmNJ-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130926kmNJ-MCP 관리 툴 프로그램.png)
 
 
 ### 시스템 트레이 사용
-![](public/image/20250915130927GKcK-MCP 관리 툴 프로그램.png)
+![](./public/image/20250915130927GKcK-MCP 관리 툴 프로그램.png)
 
 
 
@@ -45,7 +45,7 @@
 cluade-desktop의 경우 현재 바꿔도 바로 적용이 안된다.
 이것을 해결하기 위해 설정 변경시 claude-desktop이 켜져 있으면 claude-desktop이 자동으로 재부팅된다.
 
-![](public/image/20250915130927HcZI-MCP 관리 툴 프로그램.gif)
+![](./public/image/20250915130927HcZI-MCP 관리 툴 프로그램.gif)
 
 **해결하는 문제:**
 - 개발 작업 시 필요한 MCP 도구와 일반 작업용 MCP 도구를 구분하여 사용

@@ -16,28 +16,35 @@
 ### 2. MCP를 사용하는 프로그램에 대한 경로 설정
 **2-1. json에서 한번에 가져오기**
  카테고리 가져오기란에서 json 설정파일을 붙여넣고 설정분석 클릭
-![](./public/image/20250915130926EVZE-MCP 관리 툴 프로그램.png)
+<img width="838" height="728" alt="20250915130926EVZE-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/459bd2e8-a0dc-4561-9a90-3fc083d57a57" />
+
 
  밑에 쓰던 mcp에 대한 내용을 분석해서 가져옴.
  카테고리 생성 클릭시 신규 카테고리 생성
-![](./public/image/20250915130926RkMN-MCP 관리 툴 프로그램.png)
+<img width="822" height="887" alt="20250915130926RkMN-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/e392c78f-cf9a-4f7c-8b6a-f74c6081aea6" />
 
-![](./public/image/20250915130926SDeU-MCP 관리 툴 프로그램.png)
+
+<img width="821" height="918" alt="20250915130926SDeU-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/7ab27e5a-da3f-4be4-9b8d-e3eb97f91209" />
+
 
 
 ### 2-2. 각자 생성
 서버 관리에서 서버 추가 하여 개별생성
-![](./public/image/20250915130926yUKf-MCP 관리 툴 프로그램.png)
+<img width="817" height="822" alt="20250915130926yUKf-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/05fcea34-e33f-4b56-aaf1-411189edfcdf" />
+
 
 카테고리 관리에서 신규 카테고리 추가 생성
-![](./public/image/20250915130926CSmm-MCP 관리 툴 프로그램.png)
+<img width="824" height="905" alt="20250915130926CSmm-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/2f866dee-25c3-4bf3-92b3-47cfa01a343d" />
+
 
 생성한 카테고리에서 서버를 추가 생성하기  
-![](./public/image/20250915130926kmNJ-MCP 관리 툴 프로그램.png)
+<img width="799" height="921" alt="20250915130926kmNJ-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/55bcd3f6-b47e-408a-a01c-0c74d2a5b68f" />
+
 
 
 ### 시스템 트레이 사용
-![](./public/image/20250915130927GKcK-MCP 관리 툴 프로그램.png)
+<img width="415" height="336" alt="20250915130927GKcK-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/69dfdbd0-8ac3-4c2c-b2d8-866ba0e7bfe4" />
+
 
 
 
@@ -45,7 +52,8 @@
 cluade-desktop의 경우 현재 바꿔도 바로 적용이 안된다.
 이것을 해결하기 위해 설정 변경시 claude-desktop이 켜져 있으면 claude-desktop이 자동으로 재부팅된다.
 
-![](./public/image/20250915130927HcZI-MCP 관리 툴 프로그램.gif)
+![20250915130927HcZI-MCP 관리 툴 프로그램](https://github.com/user-attachments/assets/27478b1d-f5d2-46b8-b5c2-d975756b4bce)
+
 
 **해결하는 문제:**
 - 개발 작업 시 필요한 MCP 도구와 일반 작업용 MCP 도구를 구분하여 사용

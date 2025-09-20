@@ -1,6 +1,6 @@
 // ServerModal.tsx - 서버 추가/편집 모달 컴포넌트
 import { Modal, Form, Button, Alert } from "react-bootstrap";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { CreateMCPServer, MCPServerConfig } from "../../type";
 
 interface ServerModalProps {
@@ -62,33 +62,21 @@ const ServerModal = ({
   submitLabel = "추가",
 }: ServerModalProps) => {
   const [jsonError, setJsonError] = useState<string>("");
-  const mcpConfigRef = useRef<HTMLTextAreaElement>(null);
+  const [mcpConfigValue, setMcpConfigValue] = useState<string>("");
 
-  // 모달이 열릴 때만 서버 데이터를 textarea에 설정
+  // 모달이 열릴 때 서버 데이터를 상태에 설정
   useEffect(() => {
-    if (mcpConfigRef.current && show) {
+    if (show) {
       const config = parseServerValue(server.value);
-      mcpConfigRef.current.value = formatServerValue(config);
+      const formattedValue = formatServerValue(config);
+      setMcpConfigValue(formattedValue);
     }
-  }, [show]); // 모달이 열릴 때만 실행
-
-  // 서버 데이터가 변경될 때 (수정 모드에서 다른 서버 선택 시)
-  useEffect(() => {
-    if (mcpConfigRef.current && show && server) {
-      // 현재 textarea에 포커스가 있으면 덮어쓰지 않음
-      if (document.activeElement !== mcpConfigRef.current) {
-        const config = parseServerValue(server.value);
-        mcpConfigRef.current.value = formatServerValue(config);
-      }
-    }
-  }, [server]); // server가 변경될 때만 실행
+  }, [show, server.value]); // 모달이 열릴 때와 server.value가 변경될 때 실행
 
   const handleClose = () => {
     onHide();
     // 모달이 닫힐 때만 초기화 (onServerChange 호출하지 않음)
-    if (mcpConfigRef.current) {
-      mcpConfigRef.current.value = "";
-    }
+    setMcpConfigValue("");
     setJsonError("");
   };
 
@@ -121,19 +109,22 @@ const ServerModal = ({
       setJsonError("");
       return true;
     } catch (error) {
-      setJsonError(error as string);
+      setJsonError(error instanceof Error ? error.message : String(error));
       return false;
     }
   };
 
   const handleSubmit = () => {
+    // 에러 메시지 초기화
+    setJsonError("");
+
     // 서버명 검증
     if (!server.name.trim()) {
       setJsonError("서버명을 입력해주세요.");
       return;
     }
 
-    const jsonValue = (mcpConfigRef.current?.value || "").trim();
+    const jsonValue = mcpConfigValue.trim();
 
     // JSON 검증
     if (!jsonValue) {
@@ -141,8 +132,9 @@ const ServerModal = ({
       return;
     }
 
+    // JSON 형식 및 구조 검증
     if (!validateJson(jsonValue)) {
-      return;
+      return; // 검증 실패 시 여기서 중단, 모달은 열린 상태 유지
     }
 
     try {
@@ -170,6 +162,7 @@ const ServerModal = ({
     } catch (error) {
       console.error("JSON parse error:", error);
       setJsonError("유효하지 않은 JSON 형식입니다.");
+      // 에러 발생 시에도 모달은 열린 상태 유지
     }
   };
 
@@ -197,8 +190,8 @@ const ServerModal = ({
             <Form.Control
               as="textarea"
               rows={8}
-              ref={mcpConfigRef}
-              onBlur={(e) => validateJson(e.target.value)}
+              value={mcpConfigValue}
+              onChange={(e) => setMcpConfigValue(e.target.value)}
               placeholder={`{
   "command": "cmd",
   "args": [
@@ -232,7 +225,7 @@ const ServerModal = ({
         <Button variant="secondary" onClick={handleClose}>
           취소
         </Button>
-        <Button variant="primary" onClick={handleSubmit} disabled={!!jsonError}>
+        <Button variant="primary" onClick={handleSubmit}>
           {submitLabel}
         </Button>
       </Modal.Footer>

@@ -217,64 +217,56 @@ const ServerManagement = () => {
         </Card.Header>
         <Card.Body>
           {servers.length > 0 ? (
-            <ListGroup variant="flush">
-              {servers.map((server) => (
-                <ListGroup.Item
-                  key={server.id}
-                  className="d-flex justify-content-between align-items-start"
-                >
-                  <div className="ms-2 me-auto">
-                    <div className="fw-bold d-flex align-items-center">
-                      {server.name}
-                      {server.delYn && (
-                        <Badge bg="secondary" className="ms-2">삭제됨</Badge>
-                      )}
+            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              <ListGroup variant="flush">
+                {servers.map((server) => (
+                  <ListGroup.Item
+                    key={server.id}
+                    className="d-flex justify-content-between align-items-start"
+                  >
+                    <div className="ms-2 me-auto">
+                      <div className="fw-bold d-flex align-items-center">
+                        {server.name}
+                        {server.delYn && (
+                          <Badge bg="secondary" className="ms-2">삭제됨</Badge>
+                        )}
+                      </div>
+                      <small className="text-muted">
+                        {(() => {
+                          try {
+                            const parsed = JSON.parse(server.value || '{}');
+                            return parsed.description || '';
+                          } catch (error) {
+                            return '';
+                          }
+                        })()}
+                      </small>
+                      <div className="text-muted small mt-1">
+                        <strong>버전:</strong> {server.version} | 
+                        <strong> 생성일:</strong> {new Date(server.createdAt).toLocaleDateString()}
+                      </div>
                     </div>
-                    <small className="text-muted">
-                      {(() => {
-                        try {
-                          const parsed = JSON.parse(server.value || '{}');
-                          return parsed.description || '';
-                        } catch (error) {
-                          return '';
-                        }
-                      })()}
-                    </small>
-                    <div className="text-muted small font-monospace mt-1">
-                      <strong>설정:</strong> {(() => {
-                        try {
-                          const parsed = JSON.parse(server.value || '{}');
-                          return JSON.stringify(parsed, null, 2);
-                        } catch (error) {
-                          return server.value;
-                        }
-                      })()}
+                    <div className="d-flex gap-1">
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => handleEditServer(server)}
+                        disabled={server.delYn}
+                      >
+                        <Edit size={12} />
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleDeleteServer(server)}
+                      >
+                        <Trash2 size={12} />
+                      </Button>
                     </div>
-                    <div className="text-muted small mt-1">
-                      <strong>버전:</strong> {server.version} | 
-                      <strong> 생성일:</strong> {new Date(server.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="d-flex gap-1">
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      onClick={() => handleEditServer(server)}
-                      disabled={server.delYn}
-                    >
-                      <Edit size={12} />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={() => handleDeleteServer(server)}
-                    >
-                      <Trash2 size={12} />
-                    </Button>
-                  </div>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </div>
           ) : (
             <EmptyState
               icon={<Server size={48} />}

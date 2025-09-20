@@ -13,11 +13,6 @@ import { toast } from 'react-toastify';
 import type { MCPConfigTarget, CreateMCPConfigTarget } from '../../type';
 import DeleteConfirmModal from '../shared/DeleteConfirmModal';
 
-interface ConfigTargetManagementProps {
-  targets: MCPConfigTarget[];
-  onRefresh: () => void;
-}
-
 const ConfigTargetManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -226,8 +221,6 @@ const ConfigTargetManagement = () => {
               <thead>
                 <tr>
                   <th>표시명 (이름)</th>
-                  <th>설정 파일 경로</th>
-                  <th>타입</th>
                   <th style={{ width: '150px' }}>작업</th>
                 </tr>
               </thead>
@@ -236,14 +229,6 @@ const ConfigTargetManagement = () => {
                   <tr key={target.id}>
                     <td>
                       <strong>{target.name}</strong>
-                    </td>
-                    <td>
-                      <code className="text-muted">{target.configPath}</code>
-                    </td>
-                    <td>
-                      <Badge bg={target.isBuiltIn ? 'secondary' : 'primary'}>
-                        {target.isBuiltIn ? '기본 제공' : '사용자 정의'}
-                      </Badge>
                     </td>
                     <td>
                       <div className="d-flex gap-1">

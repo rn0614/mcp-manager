@@ -1,6 +1,6 @@
 // CategoryList.tsx - 카테고리 리스트 및 기능 컴포넌트
 import { useState, useMemo } from "react";
-import { Row, Col, Card, Button, Badge, ListGroup } from "react-bootstrap";
+import { ListGroup, Button, Badge } from "react-bootstrap";
 import { Settings, Trash2, RotateCcw, Check, Layers } from "lucide-react";
 import type { MCPCategory, MCPServer } from "../../type";
 import { ICON_MAP } from "../../constants/categoryConstants";
@@ -68,114 +68,100 @@ const CategoryList = ({
 
   if (categories.length === 0) {
     return (
-      <Card.Body>
+      <div className="p-4">
         <EmptyState
           icon={<Layers size={48} />}
           title="카테고리가 없습니다"
           description="첫 번째 MCP 카테고리를 만들어보세요"
         />
-      </Card.Body>
+      </div>
     );
   }
 
   return (
     <>
-      <Card.Body>
-        <Row>
-          {categories.map((category) => {
-            const categoryServers = getCategoryServers(category.id);
-            const isActive = currentCategory?.id === category.id;
+      <ListGroup variant="flush">
+        {categories.map((category) => {
+          const categoryServers = getCategoryServers(category.id);
+          const isActive = currentCategory?.id === category.id;
 
-            return (
-              <Col key={category.id} lg={4} md={6} className="mb-4">
-                <Card className={`h-100 ${isActive ? "border-primary" : ""}`}>
-                  <Card.Header className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex align-items-center">
-                      <IconComponent
-                        iconName={category.icon}
-                        className="me-2"
-                      />
-                      <div>
-                        <h5 className="mb-0">{category.name}</h5>
-                        <small className="text-muted">
-                          {category.description}
-                        </small>
-                        <div className="mt-1">
-                          <Badge bg={"secondary"} className="me-1">
-                            {category.target}
-                          </Badge>
-                        </div>
-                      </div>
+          return (
+            <ListGroup.Item
+              key={category.id}
+              className={`py-3 ${isActive ? "bg-light border-start border-primary border-3" : ""}`}
+            >
+              <div className="d-flex justify-content-between align-items-center">
+                {/* 왼쪽: 카테고리 정보 */}
+                <div className="d-flex align-items-center flex-grow-1">
+                  <IconComponent
+                    iconName={category.icon}
+                    className="me-3"
+                    size={24}
+                  />
+                  <div className="flex-grow-1">
+                    <div className="d-flex align-items-center mb-1">
+                      <h6 className="mb-0 me-2 text-truncate" style={{ maxWidth: '200px' }}>
+                        {category.name}
+                      </h6>
+                      {isActive && (
+                        <Badge bg="success" className="d-flex align-items-center">
+                          <Check className="me-1" size={12} />
+                          <span className="d-none d-md-inline">활성</span>
+                        </Badge>
+                      )}
                     </div>
-                    {isActive && (
-                      <Badge bg="success" className="d-flex align-items-center">
-                        <Check className="me-1" size={12} />
-                        활성
-                      </Badge>
-                    )}
-                  </Card.Header>
-                  <Card.Body>
-                    <h6 className="text-muted mb-2">
-                      MCP 서버 ({categoryServers.length}개)
-                    </h6>
-                    {categoryServers.length > 0 ? (
-                      <ListGroup variant="flush">
-                        {categoryServers.map((server) => (
-                          <ListGroup.Item
-                            key={server.id}
-                            className="d-flex justify-content-between align-items-start"
-                          >
-                            <div className="ms-2 me-auto">
-                              <div className="fw-bold">{server.name}</div>
-                            </div>
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
-                    ) : (
-                      <p className="text-muted small">서버가 없습니다</p>
-                    )}
-                  </Card.Body>
-                  <Card.Footer>
-                    <div className="d-grid gap-2">
-                      <div className="d-flex gap-1">
-                        {!isActive && selectedTarget !== "all" && (
-                          <Button
-                            variant="primary"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              onSwitchCategory(category.id);
-                            }}
-                            className="d-flex align-items-center justify-content-center flex-fill"
-                          >
-                            <RotateCcw className="me-1" size={16} />
-                            전환
-                          </Button>
-                        )}
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => handleManageServers(category.id)}
-                          className="d-flex align-items-center justify-content-center flex-fill"
-                        >
-                          <Settings className="me-1" size={16} />
-                          서버 관리
-                        </Button>
-                      </div>
-                      <Button
-                        variant="outline-danger"
-                        onClick={() => onDeleteCategory(category.id)}
-                        className="d-flex align-items-center justify-content-center"
-                      >
-                        <Trash2 className="me-1" size={16} />
-                        삭제
-                      </Button>
-                    </div>
-                  </Card.Footer>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
-      </Card.Body>
+                    <p className="text-muted mb-0 small text-truncate" style={{ maxWidth: '300px' }}>
+                      {category.description}
+                    </p>
+                    <small className="text-muted">
+                      {categoryServers.length}개의 MCP 서버 설정됨
+                    </small>
+                  </div>
+                </div>
+
+                {/* 오른쪽: 액션 버튼들 */}
+                <div className="d-flex gap-1">
+                  {!isActive && selectedTarget !== "all" && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onSwitchCategory(category.id);
+                      }}
+                      className="d-flex align-items-center"
+                      title="카테고리 전환"
+                    >
+                      <RotateCcw size={14} />
+                      <span className="d-none d-lg-inline ms-1">전환</span>
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() => handleManageServers(category.id)}
+                    className="d-flex align-items-center"
+                    title="서버 관리"
+                  >
+                    <Settings size={14} />
+                    <span className="d-none d-lg-inline ms-1">서버 관리</span>
+                  </Button>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => onDeleteCategory(category.id)}
+                    className="d-flex align-items-center"
+                    title="카테고리 삭제"
+                  >
+                    <Trash2 size={14} />
+                    <span className="d-none d-lg-inline ms-1">삭제</span>
+                  </Button>
+                </div>
+              </div>
+            </ListGroup.Item>
+          );
+        })}
+      </ListGroup>
 
       <ServerManageModal
         show={showManageServers}

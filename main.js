@@ -34,8 +34,8 @@ let store;    // 인스턴스
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
+    width: 500,
+    height: 800,
     icon: path.join(__dirname, 'public/favicon.png'),
     webPreferences: {
       nodeIntegration: false,

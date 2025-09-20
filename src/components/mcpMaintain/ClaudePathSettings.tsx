@@ -1,7 +1,7 @@
 // ClaudePathSettings.tsx - Claude 경로 설정 컴포넌트
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Form, Alert, InputGroup } from 'react-bootstrap';
-import { FolderOpen, Check, X, Save, RefreshCw } from 'lucide-react';
+import { Button, Card, Form, Alert, InputGroup, Modal } from 'react-bootstrap';
+import { FolderOpen, Check, X, Save, HelpCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const ClaudePathSettings: React.FC = () => {
@@ -9,6 +9,7 @@ const ClaudePathSettings: React.FC = () => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   // Claude 경로 로드
   const loadClaudePath = async () => {
@@ -124,8 +125,18 @@ const ClaudePathSettings: React.FC = () => {
   return (
     <div>      {/* Claude 경로 설정 카드 */}
       <Card className="mb-4">
-        <Card.Header>
-          <h5>Claude Desktop 실행 파일 경로</h5>
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <h5 className="mb-0">Claude Desktop 실행 파일 경로</h5>
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={() => setShowHelpModal(true)}
+            className="d-flex align-items-center"
+            title="사용 안내"
+          >
+            <HelpCircle size={16} className="me-1" />
+            도움말
+          </Button>
         </Card.Header>
         <Card.Body>
           <Form.Group className="mb-3">
@@ -206,12 +217,17 @@ const ClaudePathSettings: React.FC = () => {
         </Card.Body>
       </Card>
 
-      {/* 안내 정보 */}
-      <Card>
-        <Card.Header>
-          <h5>사용 안내</h5>
-        </Card.Header>
-        <Card.Body>
+      {/* 도움말 모달 */}
+      <Modal show={showHelpModal} onHide={() => setShowHelpModal(false)} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <div className="d-flex align-items-center">
+              <HelpCircle size={20} className="me-2" />
+              Claude Desktop 경로 설정 안내
+            </div>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <Alert variant="info">
             <strong>Claude Desktop 경로 설정 안내:</strong>
             <ul className="mb-0 mt-2">
@@ -238,8 +254,13 @@ const ClaudePathSettings: React.FC = () => {
               <li>경로를 변경한 후에는 Claude 제어 기능에서 새로운 경로가 적용됩니다.</li>
             </ul>
           </Alert>
-        </Card.Body>
-      </Card>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowHelpModal(false)}>
+            닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

@@ -14,13 +14,13 @@ interface ServerModalProps {
   // 카테고리 선택 관련 props (선택사항)
   showCategorySelect?: boolean;
   selectedCategory?: string;
-  onCategoryChange?: (categoryId: string) => void;
   categories?: any[];
 }
 
 // JSON 파싱 유틸리티 함수들
 const parseServerValue = (value: string): MCPServerConfig | null => {
-  if (!value || value.trim() === '' || value === '{}') {
+  const trimmedValue = value?.trim() || '';
+  if (!trimmedValue || trimmedValue === '{}') {
     return null;
   }
   
@@ -31,7 +31,7 @@ const parseServerValue = (value: string): MCPServerConfig | null => {
     }
     
     // JSON 문자열 파싱
-    const parsed = JSON.parse(value);
+    const parsed = JSON.parse(trimmedValue);
     return parsed as MCPServerConfig;
   } catch (error) {
     console.error('Error parsing server value:', error);
@@ -60,9 +60,6 @@ const ServerModal = ({
   onSubmit,
   title = "새 MCP 서버 추가",
   submitLabel = "추가",
-  selectedCategory = "",
-  onCategoryChange,
-  categories = [],
 }: ServerModalProps) => {
   const [jsonError, setJsonError] = useState<string>("");
   const mcpConfigRef = useRef<HTMLTextAreaElement>(null);
@@ -92,20 +89,18 @@ const ServerModal = ({
     if (mcpConfigRef.current) {
       mcpConfigRef.current.value = "";
     }
-    if (onCategoryChange) {
-      onCategoryChange("");
-    }
     setJsonError("");
   };
 
   const validateJson = (value: string): boolean => {
     try {
-      if (!value.trim()) {
+      const trimmedValue = value.trim();
+      if (!trimmedValue) {
         setJsonError("");
         return true;
       }
       
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(trimmedValue);
       
       // MCPServerConfig 구조 검증
       if (typeof parsed !== 'object' || parsed === null) {
@@ -126,7 +121,7 @@ const ServerModal = ({
       setJsonError("");
       return true;
     } catch (error) {
-      setJsonError("유효하지 않은 JSON 형식입니다.");
+      setJsonError(error as string);
       return false;
     }
   };
@@ -138,10 +133,10 @@ const ServerModal = ({
       return;
     }
 
-    const jsonValue = mcpConfigRef.current?.value || "";
+    const jsonValue = (mcpConfigRef.current?.value || "").trim();
 
     // JSON 검증
-    if (!jsonValue.trim()) {
+    if (!jsonValue) {
       setJsonError("MCP 설정을 입력해주세요.");
       return;
     }
@@ -185,23 +180,6 @@ const ServerModal = ({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3">
-            <Form.Label>카테고리 선택</Form.Label>
-            <Form.Select
-              value={selectedCategory}
-              onChange={(e) =>
-                onCategoryChange && onCategoryChange(e.target.value)
-              }
-            >
-              <option value="">카테고리를 선택하세요</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-
           <Form.Group className="mb-3">
             <Form.Label>서버명</Form.Label>
             <Form.Control

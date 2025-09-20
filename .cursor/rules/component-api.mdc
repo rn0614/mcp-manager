@@ -1,0 +1,220 @@
+---
+alwaysApply: false
+---
+
+# 컴포넌트별 ElectronAPI 사용 현황
+
+## 컴포넌트 계층 구조와 API 매핑
+
+### 최상위 레벨
+```
+main.tsx
+├── ModalProvider (전역 모달 컨텍스트)
+└── App.tsx
+    └── MCPMaintain.tsx (메인 페이지)
+```
+
+#### MCPMaintain.tsx (메인 페이지)
+**역할**: 탭 기반 네비게이션 및 전역 상태 관리
+**ElectronAPI 사용**:
+- `window.electronAPI.getMCPStore()` - MCP 스토어 데이터 로드
+- `(window.electronAPI as any).setSelectedTarget(newTarget)` - 선택된 타겟 저장
+
+---
+
+### 카테고리 관리 계층
+```
+MCPMaintain.tsx
+└── CategoryManagement.tsx (카테고리 관리 컨테이너)
+    ├── ActiveCategoryDisplay.tsx (현재 활성 카테고리 표시)
+    ├── CategoryCreator.tsx (카테고리 생성)
+    │   └── CategoryModal.tsx (카테고리 모달)
+    └── CategoryList.tsx (카테고리 목록)
+        └── ServerManageModal.tsx (서버 관리 모달)
+```
+
+#### CategoryManagement.tsx
+**역할**: 카테고리 관리 기능들을 조합하는 컨테이너
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).updateTrayMenu()` - 트레이 메뉴 업데이트
+
+#### useCategoryManagement.ts (커스텀 훅)
+**역할**: 카테고리 관련 모든 비즈니스 로직 처리
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).getMCPStore()` - 스토어 데이터 로드
+- `(window.electronAPI as any).createMCPCategory(newCategory)` - 카테고리 생성
+- `(window.electronAPI as any).deleteMCPCategory(categoryId)` - 카테고리 삭제
+- `(window.electronAPI as any).setActiveCategory(selectedTarget, categoryId)` - 활성 카테고리 설정
+- `(window.electronAPI as any).writeMCPConfig(configPath, mcpConfig)` - MCP 설정 파일 쓰기
+- `(window.electronAPI as any).updateTrayMenu()` - 트레이 메뉴 업데이트
+- `(window.electronAPI as any).removeServerFromCategory(categoryId, serverId)` - 카테고리에서 서버 제거
+- `(window.electronAPI as any).addServerToCategory(categoryId, serverId, 0)` - 카테고리에 서버 추가
+- `(window.electronAPI as any).onTrayCategoryChanged(handleCategoryChange)` - 트레이 카테고리 변경 이벤트 리스너
+- `(window.electronAPI as any).removeTrayCategoryChangedListener(handleCategoryChange)` - 이벤트 리스너 제거
+
+#### ActiveCategoryDisplay.tsx
+**역할**: 현재 활성화된 카테고리 정보 표시
+**ElectronAPI 사용**: 없음 (props로 데이터 받음)
+
+#### CategoryCreator.tsx
+**역할**: 새 카테고리 생성 버튼 및 모달 관리
+**ElectronAPI 사용**: 없음 (부모 컴포넌트 함수 호출)
+
+#### CategoryModal.tsx
+**역할**: 카테고리 생성/수정 모달 UI
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).getMCPStore()` - 설정 타겟 목록 로드
+
+#### CategoryList.tsx
+**역할**: 카테고리 목록 표시 및 개별 카테고리 관리
+**ElectronAPI 사용**: 없음 (부모 컴포넌트 함수 호출)
+
+#### CategoryImport.tsx
+**역할**: 외부에서 카테고리 데이터 가져오기
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).getMCPStore()` - 기존 서버 데이터 확인
+- `(window.electronAPI as any).createMCPCategory(categoryData)` - 카테고리 생성
+- `(window.electronAPI as any).createMCPServer(serverData)` - 서버 생성
+- `(window.electronAPI as any).addServerToCategory(categoryId, serverId, 0)` - 서버를 카테고리에 추가
+- `(window.electronAPI as any).updateTrayMenu()` - 트레이 메뉴 업데이트
+
+---
+
+### 서버 관리 계층
+```
+MCPMaintain.tsx
+└── ServerManagement.tsx (서버 관리)
+    ├── ServerModal.tsx (서버 모달)
+    └── DeleteConfirmModal.tsx (삭제 확인 모달)
+```
+
+#### ServerManagement.tsx
+**역할**: MCP 서버 CRUD 관리
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).getMCPServer()` - 서버 목록 로드
+- `(window.electronAPI as any).createMCPServer(newServer)` - 서버 생성
+- `(window.electronAPI as any).updateMCPServer(editingServerId, dataToUpdate)` - 서버 수정
+- `(window.electronAPI as any).deleteMCPServer(deletingServer.id)` - 서버 삭제
+
+#### ServerModal.tsx
+**역할**: 서버 생성/수정 모달 UI
+**ElectronAPI 사용**: 없음 (부모 컴포넌트로 데이터 전달)
+
+#### DeleteConfirmModal.tsx
+**역할**: 삭제 확인 모달 UI
+**ElectronAPI 사용**: 없음
+
+---
+
+### 설정 관리 계층
+```
+MCPMaintain.tsx
+├── ClaudePathSettings.tsx (Claude 경로 설정)
+└── ConfigTargetManagement.tsx (설정 타겟 관리)
+    └── ConfigPathForm.tsx (설정 경로 폼)
+```
+
+#### ClaudePathSettings.tsx
+**역할**: Claude Desktop 실행 파일 경로 관리
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).loadClaudePath()` - 저장된 Claude 경로 로드
+- `(window.electronAPI as any).validateClaudePath(path)` - Claude 경로 유효성 검증
+- `(window.electronAPI as any).saveClaudePath(claudePath)` - Claude 경로 저장
+- `(window.electronAPI as any).selectFile()` - 파일 선택 대화상자
+
+#### ConfigTargetManagement.tsx
+**역할**: 설정 타겟 (Claude, Cursor 등) CRUD 관리
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).getMCPConfig()` - 설정 타겟 목록 로드
+- `(window.electronAPI as any).createMCPConfigTarget(formData)` - 설정 타겟 생성
+- `(window.electronAPI as any).updateMCPConfigTarget(editingTarget.id, formData)` - 설정 타겟 수정
+- `(window.electronAPI as any).deleteMCPConfigTarget(deletingTarget.id)` - 설정 타겟 삭제
+- `(window.electronAPI as any).selectFile()` - 파일 선택 대화상자
+
+#### ConfigPathForm.tsx
+**역할**: 설정 파일 경로 입력 폼
+**ElectronAPI 사용**:
+- `(window.electronAPI as any).selectFile()` - 파일 선택 대화상자
+
+---
+
+### 공통 컴포넌트 계층
+```
+main.tsx
+├── ModalProvider.tsx (모달 프로바이더)
+└── 공통 컴포넌트들
+    ├── PageHeader.tsx (페이지 헤더)
+    └── EmptyState.tsx (빈 상태)
+```
+
+#### ModalProvider.tsx
+**역할**: 전역 모달 컨텍스트 제공
+**ElectronAPI 사용**: 없음
+
+#### PageHeader.tsx
+**역할**: 페이지 제목 및 타겟 선택 드롭다운 제공
+**ElectronAPI 사용**: 없음 (props로 데이터 받음)
+
+#### EmptyState.tsx
+**역할**: 데이터가 없을 때 표시하는 UI
+**ElectronAPI 사용**: 없음
+
+---
+
+## ElectronAPI 사용 패턴 요약
+
+### 데이터 로드 API
+- **getMCPStore()**: MCPMaintain, useCategoryManagement, CategoryModal, CategoryImport
+- **getMCPServer()**: ServerManagement
+- **getMCPConfig()**: ConfigTargetManagement
+- **loadClaudePath()**: ClaudePathSettings
+
+### 데이터 생성 API
+- **createMCPCategory()**: useCategoryManagement, CategoryImport
+- **createMCPServer()**: ServerManagement, CategoryImport
+- **createMCPConfigTarget()**: ConfigTargetManagement
+
+### 데이터 수정 API
+- **updateMCPServer()**: ServerManagement
+- **updateMCPConfigTarget()**: ConfigTargetManagement
+- **setActiveCategory()**: useCategoryManagement
+- **setSelectedTarget()**: MCPMaintain
+
+### 데이터 삭제 API
+- **deleteMCPCategory()**: useCategoryManagement
+- **deleteMCPServer()**: ServerManagement
+- **deleteMCPConfigTarget()**: ConfigTargetManagement
+
+### 관계 관리 API
+- **addServerToCategory()**: useCategoryManagement, CategoryImport
+- **removeServerFromCategory()**: useCategoryManagement
+
+### 파일 시스템 API
+- **selectFile()**: ClaudePathSettings, ConfigTargetManagement, ConfigPathForm
+- **writeMCPConfig()**: useCategoryManagement
+- **saveClaudePath()**: ClaudePathSettings
+- **validateClaudePath()**: ClaudePathSettings
+
+### UI 업데이트 API
+- **updateTrayMenu()**: CategoryManagement, useCategoryManagement, CategoryImport
+
+### 이벤트 리스너 API
+- **onTrayCategoryChanged()**: useCategoryManagement
+- **removeTrayCategoryChangedListener()**: useCategoryManagement
+
+---
+
+## 개발 시 참고사항
+
+### 1. API 사용 패턴
+- **컨테이너 컴포넌트**: 직접 ElectronAPI 호출
+- **프레젠테이션 컴포넌트**: props로 데이터 받고 콜백 함수 호출
+- **커스텀 훅**: 복잡한 비즈니스 로직과 API 호출을 캡슐화
+
+### 2. 타입 안전성
+- 모든 API 호출은 `(window.electronAPI as any)` 형태로 타입 캐스팅
+- 함수 존재 여부 확인 후 호출
+
+### 3. 에러 처리
+- 모든 API 호출에 try-catch 블록 적용
+- 사용자에게 적절한 피드백 제공

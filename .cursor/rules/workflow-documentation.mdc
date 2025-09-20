@@ -1,0 +1,143 @@
+---
+alwaysApply: false
+---
+
+# Workflow Documentation Rules
+
+## Purpose
+Create documentation focused on **business logic and workflows** rather than technical implementation details, making it easy for future developers to understand how features work.
+
+## Documentation Principles
+
+### ✅ Include These Elements
+1. **Data Branching Criteria**: When and how logic branches
+2. **Function Names**: Which functions are called (excluding technical implementation)
+3. **External API Integration**: Points of integration with external systems
+4. **User Actions**: What actions users perform
+5. **Results/State**: What results occur at each step
+6. **Business Rules**: Why the system behaves this way
+
+### ❌ Exclude These Elements
+- Code implementation details
+- Variable names, type definitions, interface structures
+- Technical architecture explanations
+- Error handling details
+- Performance optimization content
+
+## Document Structure Template
+
+```markdown
+# [Feature Name] Workflow
+
+## Overview
+- Brief description of what this feature does
+- What problem it solves for users
+
+## User Scenario
+- User performs [specific action]
+- [Condition] determines [result]
+
+## Branching Criteria
+1. **[Condition A]** → Execute [Path 1]
+2. **[Condition B]** → Execute [Path 2]
+3. **[Condition C]** → Execute [Path 3]
+
+## Execution Flow
+1. **[Function Name]** Call
+   - Purpose: [Why it's called]
+   - Result: [What state changes]
+
+2. **[External API]** Integration
+   - Purpose: [What data is retrieved]
+   - Result: [What information is obtained]
+
+3. **[State Change]** Occurs
+   - Purpose: [Why state is changed]
+   - Result: [What UI updates]
+
+## Data Flow
+- Input: [Data user inputs]
+- Processing: [How it's transformed]
+- Output: [Final result]
+
+## Exception Handling
+- **[Exception 1]**: [How it's handled]
+- **[Exception 2]**: [How it's handled]
+
+## Related Functions
+- `[Function1]`: [Role description]
+- `[Function2]`: [Role description]
+- `[Function3]`: [Role description]
+```
+
+## Writing Guidelines
+
+### 1. Write from User Perspective
+- Start with "When user clicks..." format
+- Use common terms rather than technical jargon
+
+### 2. Clarify Branching Criteria
+- Explain if/else conditions as business logic
+- Use expressions like "if data exists", "if user has permission"
+
+### 3. Function Names by Role
+- `switchToCategory()` → "Category switching function"
+- `updateMCPConfig()` → "Configuration file update function"
+
+### 4. Emphasize External Integration Points
+- API calls, file saves, database connections
+- Include reasons for external integration
+
+### 5. Result-Focused Explanation
+- Specify "what changes" at each step
+- UI changes, data changes, state changes
+
+## Example: System Tray Category Change
+
+```markdown
+# System Tray Category Change Workflow
+
+## Overview
+When users select a different category from the system tray, the server settings for that category are reflected in the actual Claude/Cursor configuration files.
+
+## User Scenario
+- User right-clicks system tray icon
+- Selects desired category from "Claude Category" or "Cursor Category" submenu
+- Servers in selected category become available in the respective application
+
+## Branching Criteria
+1. **Claude Category Selected** → Update Claude configuration file
+2. **Cursor Category Selected** → Update Cursor configuration file
+3. **Category Has No Servers** → Create empty configuration file
+
+## Execution Flow
+1. **Category Switch Function** Call
+   - Purpose: Change selected category to active state
+   - Result: Store active category information
+
+2. **Configuration File Update Function** Call
+   - Purpose: Reflect selected category's servers in actual configuration file
+   - Result: Claude/Cursor recognizes new servers
+
+3. **Renderer Process Notification**
+   - Purpose: Display changed category information in UI
+   - Result: New active category shown in app interface
+
+## Data Flow
+- Input: Category ID selected by user
+- Processing: Convert servers in category to configuration file format
+- Output: Save as JSON in Claude/Cursor configuration file
+
+## Related Functions
+- `switchToCategory()`: Category switching processing
+- `updateMCPConfig()`: Configuration file update
+- `updateTrayMenu()`: Tray menu state synchronization
+```
+
+## Checklist
+- [ ] Written from user perspective?
+- [ ] Branching criteria clear?
+- [ ] Function names match their roles?
+- [ ] External integration points specified?
+- [ ] Results clear at each step?
+- [ ] Technical details excluded?

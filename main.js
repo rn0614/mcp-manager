@@ -9,9 +9,17 @@ import { promisify } from 'util';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isDev = process.env.NODE_ENV === 'development';
+const execAsync = promisify(exec);
 
-// 설정 저장소 초기화
-const store = new Store();
+
+// 1) 포터블 데이터 폴더 지정 (실행 파일 옆 ./data)
+const baseDir =
+  process.env.PORTABLE_EXECUTABLE_DIR      // electron-builder portable가 설정해줌
+  || path.dirname(process.execPath);       // exe가 있는 폴더
+const dataDir = path.join(baseDir, 'data');
+fs.ensureDirSync(dataDir);
+
+app.setPath('userData', dataDir);        // <-- Store가 이 경로를 사용하게 됨
 
 // 트레이 관련 변수
 let tray = null;
@@ -20,8 +28,9 @@ let mainWindow = null;
 // 앱 종료 상태 플래그
 app.isQuiting = false;
 
+let store;    // 인스턴스
+
 // promisify exec 함수
-const execAsync = promisify(exec);
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -1190,7 +1199,14 @@ async function updateMCPConfig(categoryId, target) {
   }
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => {
+  store = new Store({
+    name: 'settings' // settings.json (경로는 userData 아래)
+  });
+
+  // 이제부터 store 사용
+  createWindow();
+});
 
 app.on('window-all-closed', (event) => {
   // macOS가 아닌 경우에도 앱을 종료하지 않고 트레이에 숨김

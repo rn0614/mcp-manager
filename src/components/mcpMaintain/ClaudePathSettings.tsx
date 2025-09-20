@@ -122,20 +122,7 @@ const ClaudePathSettings: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Claude Desktop 경로 설정</h2>
-        <Button 
-          variant="outline-primary" 
-          onClick={loadClaudePath}
-          disabled={isLoading}
-        >
-          {isLoading ? <RefreshCw size={16} className="spinning" /> : <RefreshCw size={16} />}
-          <span className="ms-1">새로고침</span>
-        </Button>
-      </div>
-
-      {/* Claude 경로 설정 카드 */}
+    <div>      {/* Claude 경로 설정 카드 */}
       <Card className="mb-4">
         <Card.Header>
           <h5>Claude Desktop 실행 파일 경로</h5>
@@ -253,17 +240,6 @@ const ClaudePathSettings: React.FC = () => {
           </Alert>
         </Card.Body>
       </Card>
-
-      <style jsx>{`
-        .spinning {
-          animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };

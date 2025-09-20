@@ -61,14 +61,15 @@ const ServerManagement = () => {
       return;
     }
 
-    if (!newServer.value || newServer.value === '{}') {
+    const trimmedValue = newServer.value?.trim() || '';
+    if (!trimmedValue || trimmedValue === '{}') {
       toast.error("MCP 설정을 입력해주세요.");
       return;
     }
 
     try {
       // JSON 유효성 검사
-      JSON.parse(newServer.value);
+      JSON.parse(trimmedValue);
       
       console.log("Creating server with data:", newServer);
       const result = await (window.electronAPI as any).createMCPServer(newServer);
@@ -120,14 +121,15 @@ const ServerManagement = () => {
       return;
     }
 
-    if (!dataToUpdate.value || dataToUpdate.value === '{}') {
+    const trimmedUpdateValue = dataToUpdate.value?.trim() || '';
+    if (!trimmedUpdateValue || trimmedUpdateValue === '{}') {
       toast.error("MCP 설정을 입력해주세요.");
       return;
     }
 
     try {
       // JSON 유효성 검사
-      JSON.parse(dataToUpdate.value);
+      JSON.parse(trimmedUpdateValue);
       
       console.log("Updating server:", editingServerId, "with data:", dataToUpdate);
       const result = await (window.electronAPI as any).updateMCPServer(editingServerId, dataToUpdate);
@@ -187,6 +189,11 @@ const ServerManagement = () => {
       setIsDeleting(false);
     }
   };
+  
+  const openServerModal = () => {
+    setNewServer({ name: '', value: '{}' });
+    setShowAddServer(true);
+  };
 
   return (
     <div>
@@ -201,10 +208,7 @@ const ServerManagement = () => {
             <Button
               variant="primary"
               size="sm"
-              onClick={() => {
-                setNewServer({ name: '', value: '{}' });
-                setShowAddServer(true);
-              }}
+                onClick={openServerModal}
             >
               <Plus className="me-1" size={16} />
               서버 추가
@@ -277,10 +281,7 @@ const ServerManagement = () => {
               title="서버가 없습니다"
               description="첫 번째 MCP 서버를 추가해보세요"
               actionLabel="서버 추가"
-              onAction={() => {
-                setNewServer({ name: '', value: '{}' });
-                setShowAddServer(true);
-              }}
+              onAction={openServerModal}
             />
           )}
         </Card.Body>

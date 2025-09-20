@@ -13,7 +13,9 @@
     "electron": "cross-env NODE_ENV=development electron .",
     "electron-dev": "concurrently \"npm run dev\" \"wait-on tcp:localhost:5173 && npm run electron\"",
     "electron-build": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder --publish=never",
+    "dist": "npm run build && electron-builder -w portable --publish=never",
+    "dist:linux": "npm run build && electron-builder -l AppImage --publish=never",
+    "dist:mac": "npm run build && electron-builder -m zip --publish=never",
     "reset": "rmdir /s /q \"%APPDATA%\\mcp-manager\" 2>nul & npm run electron-dev",
     "clean": "rmdir /s /q dist 2>nul & rmdir /s /q dist-electron 2>nul & rmdir /s /q node_modules 2>nul & npm install"
   },
@@ -21,6 +23,7 @@
     "appId": "com.mcp.manager",
     "productName": "MCP Manager",
     "icon": "public/favicon.png",
+    "asar": true,   
     "directories": {
       "output": "dist-electron"
     },
@@ -31,15 +34,20 @@
       "node_modules/**/*",
       "public/**/*"
     ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "mac": {
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "target": "zip"
     },
     "win": {
-      "target": "nsis",
+      "target": "portable",
       "forceCodeSigning": false
     },
     "linux": {
       "target": "AppImage"
+    },
+    "portable": { 
+      "artifactName": "MCP Manager.exe"
     }
   },
   "dependencies": {

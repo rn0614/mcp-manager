@@ -73,19 +73,6 @@ const CategoryModal = ({
             />
           </Form.Group>
           <Form.Group className="mb-3">
-            <Form.Label>아이콘</Form.Label>
-            <Form.Select
-              value={category.icon}
-              onChange={(e) => onCategoryChange({...category, icon: e.target.value})}
-            >
-              <option value="Code">Code</option>
-              <option value="Database">Database</option>
-              <option value="Globe">Globe</option>
-              <option value="Layers">Layers</option>
-              <option value="Settings">Settings</option>
-            </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3">
             <Form.Label>대상</Form.Label>
             <Form.Select
               value={category.target}

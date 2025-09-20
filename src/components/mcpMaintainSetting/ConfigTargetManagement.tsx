@@ -1,5 +1,5 @@
 // ConfigTargetManagement.tsx - 설정 타겟 관리 컴포넌트
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   Button,
@@ -18,14 +18,33 @@ interface ConfigTargetManagementProps {
   onRefresh: () => void;
 }
 
-const ConfigTargetManagement = ({ targets, onRefresh }: ConfigTargetManagementProps) => {
+const ConfigTargetManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editingTarget, setEditingTarget] = useState<MCPConfigTarget | null>(null);
   const [deletingTarget, setDeletingTarget] = useState<MCPConfigTarget | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+  const [targets, setTargets] = useState<MCPConfigTarget[]>([]);
+
+  // 데이터 로드
+  const loadData = async () => {
+    try {
+      if (typeof (window.electronAPI as any).getMCPConfig !== "function") {
+        console.warn("MCP Config API not available");
+        return;
+      }
+      
+      // ConfigTarget만 직접 로드
+      const targets = await (window.electronAPI as any).getMCPConfig() as MCPConfigTarget[];
+      setTargets(targets);
+
+      console.log("- Config targets:", targets);
+    } catch (error) {
+      console.error("데이터 로드 실패:", error);
+      toast.error("데이터 로드 중 오류가 발생했습니다.");
+    }
+  };
   const [formData, setFormData] = useState<CreateMCPConfigTarget>({
     name: '',
     configPath: '',
@@ -107,7 +126,7 @@ const ConfigTargetManagement = ({ targets, onRefresh }: ConfigTargetManagementPr
           editingTarget ? '설정 타겟이 수정되었습니다.' : '설정 타겟이 추가되었습니다.'
         );
         handleCloseModal();
-        onRefresh();
+        loadData();
       } else {
         toast.error(`작업 실패: ${result.error}`);
       }
@@ -161,7 +180,7 @@ const ConfigTargetManagement = ({ targets, onRefresh }: ConfigTargetManagementPr
       const result = await electronAPI.deleteMCPConfigTarget(deletingTarget.id);
       if (result.success) {
         toast.success('설정 타겟이 삭제되었습니다.');
-        onRefresh();
+        loadData();
         setShowDeleteModal(false);
         setDeletingTarget(null);
       } else {
@@ -179,6 +198,9 @@ const ConfigTargetManagement = ({ targets, onRefresh }: ConfigTargetManagementPr
     setShowDeleteModal(false);
     setDeletingTarget(null);
   };
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
     <>

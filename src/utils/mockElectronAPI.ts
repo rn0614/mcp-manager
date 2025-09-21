@@ -97,7 +97,7 @@ export const mockElectronAPI = {
   },
 
   // 파일 관련
-  readMCPConfig: async (path: string) => {
+  getMCPConfig: async (path: string) => {
     await delay();
     console.log(`Mock: Reading config from ${path}`);
     // 임시로 성공 응답
@@ -164,9 +164,9 @@ if (import.meta.env.DEV && typeof window !== 'undefined' && !window.navigator?.u
   const setupMockAPI = () => {
     if (typeof window !== 'undefined') {
       // electronAPI가 없으면 mock API 설정
-      if (!(window as any).electronAPI) {
+      if (!window .electronAPI) {
         try {
-          (window as any).electronAPI = mockElectronAPI;
+          window.electronAPI = mockElectronAPI as any;
           console.log('Mock ElectronAPI loaded for browser development');
           console.log('Available API functions:', Object.keys(mockElectronAPI));
         } catch (error) {
@@ -174,7 +174,7 @@ if (import.meta.env.DEV && typeof window !== 'undefined' && !window.navigator?.u
         }
       } else {
         console.log('Using existing electronAPI from preload.js');
-        console.log('Available API functions:', Object.keys((window as any).electronAPI));
+        console.log('Available API functions:', Object.keys(window.electronAPI));
       }
     } else {
       // DOM이 로드되지 않았다면 잠시 대기 후 재시도

@@ -4,7 +4,6 @@ import {
   Card,
   Button,
   Table,
-  Badge,
   Modal,
   Form,
 } from 'react-bootstrap';
@@ -24,14 +23,9 @@ const ConfigTargetManagement = () => {
 
   // 데이터 로드
   const loadData = async () => {
-    try {
-      if (typeof (window.electronAPI as any).getMCPConfig !== "function") {
-        console.warn("MCP Config API not available");
-        return;
-      }
-      
+    try {      
       // ConfigTarget만 직접 로드
-      const targets = await (window.electronAPI as any).getMCPConfig() as MCPConfigTarget[];
+      const targets = await window.electronAPI.getMCPConfig();
       setTargets(targets);
 
       console.log("- Config targets:", targets);
@@ -80,40 +74,18 @@ const ConfigTargetManagement = () => {
       toast.error('표시명과 설정 경로는 필수입니다.');
       return;
     }
-
-    // API 함수 존재 여부 확인
-    if (!window.electronAPI) {
-      toast.error('ElectronAPI가 로드되지 않았습니다.');
-      console.error('window.electronAPI is not available');
-      return;
-    }
-
-    const electronAPI = window.electronAPI as any;
-    if (editingTarget && typeof electronAPI.updateMCPConfigTarget !== 'function') {
-      toast.error('updateMCPConfigTarget 함수를 찾을 수 없습니다.');
-      console.error('updateMCPConfigTarget function not found');
-      return;
-    }
-
-    if (!editingTarget && typeof electronAPI.createMCPConfigTarget !== 'function') {
-      toast.error('createMCPConfigTarget 함수를 찾을 수 없습니다.');
-      console.error('createMCPConfigTarget function not found');
-      console.log('Available functions:', Object.keys(electronAPI));
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       let result;
       if (editingTarget) {
         // 수정
-        result = await electronAPI.updateMCPConfigTarget(
+        result = await window.electronAPI.updateMCPConfigTarget(
           editingTarget.id,
           formData
         );
       } else {
         // 생성
-        result = await electronAPI.createMCPConfigTarget(formData);
+        result = await window.electronAPI.createMCPConfigTarget(formData);
       }
 
       if (result.success) {
@@ -135,7 +107,7 @@ const ConfigTargetManagement = () => {
 
   const handleSelectFile = async () => {
     try {
-      const filePath = await (window.electronAPI as any).selectFile();
+      const filePath = await window.electronAPI.selectFile();
       if (filePath) {
         setFormData({ ...formData, configPath: filePath });
       }
@@ -163,16 +135,9 @@ const ConfigTargetManagement = () => {
       return;
     }
 
-    const electronAPI = window.electronAPI as any;
-    if (typeof electronAPI.deleteMCPConfigTarget !== 'function') {
-      toast.error('deleteMCPConfigTarget 함수를 찾을 수 없습니다.');
-      console.error('deleteMCPConfigTarget function not found');
-      return;
-    }
-
     setIsDeleting(true);
     try {
-      const result = await electronAPI.deleteMCPConfigTarget(deletingTarget.id);
+      const result = await window.electronAPI.deleteMCPConfigTarget(deletingTarget.id);
       if (result.success) {
         toast.success('설정 타겟이 삭제되었습니다.');
         loadData();

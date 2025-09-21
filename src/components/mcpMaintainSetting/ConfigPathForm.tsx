@@ -13,7 +13,7 @@ const ConfigPathForm = ({ configTargets, onPathChange, onTest }: ConfigPathFormP
   // JSON 파일 선택 다이얼로그 열기
   const handleSelectFile = async (target: MCPConfigTarget) => {
     try {
-      const filePath = await (window.electronAPI as any).selectFile();
+      const filePath = await window.electronAPI.selectFile();
       if (filePath) {
         onPathChange(target.id, filePath);
       }

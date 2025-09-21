@@ -15,10 +15,10 @@ const ClaudePathSettings: React.FC = () => {
   const loadClaudePath = async () => {
     try {
       setIsLoading(true);
-      const result = await (window.electronAPI as any).loadClaudePath();
+      const result = await window.electronAPI.loadClaudePath();
       
       if (result.success) {
-        setClaudePath(result.path);
+        setClaudePath(result.path || '');
         // 경로가 로드되면 자동으로 검증
         if (result.path) {
           validatePath(result.path);
@@ -43,10 +43,10 @@ const ClaudePathSettings: React.FC = () => {
 
     try {
       setIsValidating(true);
-      const result = await (window.electronAPI as any).validateClaudePath(path);
+      const result = await window.electronAPI.validateClaudePath(path);
       
       if (result.success) {
-        setIsValid(result.exists);
+        setIsValid(result.exists || false);
         if (!result.exists) {
           toast.warning('지정된 경로에 파일이 존재하지 않습니다.');
         }
@@ -72,7 +72,7 @@ const ClaudePathSettings: React.FC = () => {
 
     try {
       setIsLoading(true);
-      const result = await (window.electronAPI as any).saveClaudePath(claudePath);
+      const result = await window.electronAPI.saveClaudePath(claudePath);
       
       if (result.success) {
         toast.success('Claude 경로가 저장되었습니다.');
@@ -92,7 +92,7 @@ const ClaudePathSettings: React.FC = () => {
   // 파일 선택 대화상자 열기
   const selectClaudePath = async () => {
     try {
-      const result = await (window.electronAPI as any).selectFile();
+      const result = await window.electronAPI.selectFile();
       if (result) {
         setClaudePath(result);
         // 선택된 경로 자동 검증

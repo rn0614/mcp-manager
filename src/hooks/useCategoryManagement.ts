@@ -47,12 +47,12 @@ export const useCategoryManagement = (selectedTarget: string) => {
   const loadData = useCallback(async () => {
     try {
       setIsLoading(true);
-      if (typeof (window.electronAPI as any).getMCPStore !== 'function') {
+      if (typeof window.electronAPI.getMCPStore !== 'function') {
         console.warn('MCP Store API not available');
         return;
       }
 
-      const storeData = await (window.electronAPI as any).getMCPStore();
+      const storeData = await window.electronAPI.getMCPStore();
       if (storeData) {
         const activeCategories = Object.values(storeData.categories || {})
           .filter((cat: any) => !cat.delYn) as MCPCategory[];
@@ -100,11 +100,11 @@ export const useCategoryManagement = (selectedTarget: string) => {
   // 카테고리 생성
   const createCategory = useCallback(async (newCategory: CreateMCPCategory) => {
     try {
-      const result = await (window.electronAPI as any).createMCPCategory(newCategory);
+      const result = await window.electronAPI.createMCPCategory(newCategory);
       if (result.success) {
         toast.success("카테고리가 추가되었습니다.");
         await loadData();
-        (window.electronAPI as any).updateTrayMenu();
+        window.electronAPI.updateTrayMenu();
         return { success: true, category: result.category };
       } else {
         toast.error(`카테고리 추가 실패: ${result.error}`);
@@ -120,11 +120,11 @@ export const useCategoryManagement = (selectedTarget: string) => {
   // 카테고리 삭제 (확인 없이 실행)
   const deleteCategory = useCallback(async (categoryId: string) => {
     try {
-      const result = await (window.electronAPI as any).deleteMCPCategory(categoryId);
+      const result = await window.electronAPI.deleteMCPCategory(categoryId);
       if (result.success) {
         toast.success("카테고리가 삭제되었습니다.");
         await loadData();
-        (window.electronAPI as any).updateTrayMenu();
+        window.electronAPI.updateTrayMenu();
         return { success: true };
       } else {
         toast.error(`카테고리 삭제 실패: ${result.error}`);
@@ -151,7 +151,7 @@ export const useCategoryManagement = (selectedTarget: string) => {
     }
 
     try {
-      const result = await (window.electronAPI as any).setActiveCategory(
+      const result = await window.electronAPI.setActiveCategory(
         selectedTarget,
         categoryId
       );
@@ -185,7 +185,7 @@ export const useCategoryManagement = (selectedTarget: string) => {
         return { success: false, error: "Config path not set" };
       }
 
-      const writeResult = await (window.electronAPI as any).writeMCPConfig(
+      const writeResult = await window.electronAPI.writeMCPConfig(
         configPath,
         mcpConfig
       );
@@ -195,7 +195,7 @@ export const useCategoryManagement = (selectedTarget: string) => {
         console.log("MCP config saved successfully to:", configPath);
         
         // 트레이 메뉴 업데이트
-        await (window.electronAPI as any).updateTrayMenu();
+        await window.electronAPI.updateTrayMenu();
         console.log("Tray menu updated after category switch");
         return { success: true };
       } else {
@@ -215,7 +215,7 @@ export const useCategoryManagement = (selectedTarget: string) => {
     serverId: string
   ) => {
     try {
-      const result = await (window.electronAPI as any).removeServerFromCategory(
+      const result = await window.electronAPI.removeServerFromCategory(
         categoryId,
         serverId
       );
@@ -237,7 +237,7 @@ export const useCategoryManagement = (selectedTarget: string) => {
     serverId: string
   ) => {
     try {
-      const result = await (window.electronAPI as any).addServerToCategory(
+      const result = await window.electronAPI.addServerToCategory(
         categoryId,
         serverId,
         0
@@ -268,23 +268,9 @@ export const useCategoryManagement = (selectedTarget: string) => {
     };
 
     // IPC 이벤트 리스너 등록
-    if (
-      window.electronAPI &&
-      (window.electronAPI as any).onTrayCategoryChanged
-    ) {
-      (window.electronAPI as any).onTrayCategoryChanged(handleCategoryChange);
-    }
+    window.electronAPI.onTrayCategoryChanged(handleCategoryChange);
 
-    return () => {
-      if (
-        window.electronAPI &&
-        (window.electronAPI as any).removeTrayCategoryChangedListener
-      ) {
-        (window.electronAPI as any).removeTrayCategoryChangedListener(
-          handleCategoryChange
-        );
-      }
-    };
+    return () => { window.electronAPI.removeTrayCategoryChangedListener( handleCategoryChange) }
   }, [loadData]);
 
   return {

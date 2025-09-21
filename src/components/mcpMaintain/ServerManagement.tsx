@@ -23,12 +23,8 @@ const ServerManagement = () => {
   const [servers, setServers] = useState<MCPServer[]>([]);
   const [showAddServer, setShowAddServer] = useState(false);
   const [showEditServer, setShowEditServer] = useState(false);
-  const [editingServer, setEditingServer] = useState<any>(null);
+  const [editingServer, setEditingServer] = useState<MCPServer | null>(null);
   const [editingServerId, setEditingServerId] = useState<string>('');
-  const [newServer, setNewServer] = useState({
-    name: '',
-    value: '{}'
-  });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingServer, setDeletingServer] = useState<MCPServer | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,13 +32,8 @@ const ServerManagement = () => {
   // 데이터 로드
   const loadData = async () => {
     try {
-      if (typeof (window.electronAPI as any).getMCPServer !== 'function') {
-        console.warn('MCP Server API not available');
-        return;
-      }
-
       // MCPServer만 직접 로드
-      const activeServers = await (window.electronAPI as any).getMCPServer() as MCPServer[];
+      const activeServers = await window.electronAPI.getMCPServer();
       console.log('getMCPServer',activeServers);
       setServers(activeServers);
     } catch (error) {
@@ -55,105 +46,13 @@ const ServerManagement = () => {
     loadData();
   }, []);
 
-  const handleAddServer = async () => {
-    if (!newServer.name) {
-      toast.error("서버명을 입력해주세요.");
-      return;
-    }
-
-    const trimmedValue = newServer.value?.trim() || '';
-    if (!trimmedValue || trimmedValue === '{}') {
-      toast.error("MCP 설정을 입력해주세요.");
-      return;
-    }
-
-    try {
-      // JSON 유효성 검사
-      JSON.parse(trimmedValue);
-      
-      console.log("Creating server with data:", newServer);
-      const result = await (window.electronAPI as any).createMCPServer(newServer);
-      
-      if (result.success) {
-        console.log("Server created successfully:", result.server);
-        toast.success("서버가 추가되었습니다.");
-        setNewServer({ name: '', value: '{}' });
-        setShowAddServer(false);
-        await loadData();
-      } else {
-        console.error("Failed to create server:", result.error);
-        toast.error(`서버 생성 실패: ${result.error}`);
-      }
-    } catch (error) {
-      console.error("Error adding server:", error);
-      if (error instanceof SyntaxError) {
-        toast.error("유효하지 않은 JSON 형식입니다.");
-      } else {
-        toast.error("서버 추가 중 오류가 발생했습니다.");
-      }
-    }
-  };
 
   const handleEditServer = (server: MCPServer) => {
-    // MCPServer를 CreateMCPServer 형태로 변환
-    const serverData = {
-      name: server.name,
-      value: server.value
-    };
-    setEditingServer(serverData as any);
+    setEditingServer(server);
     setEditingServerId(server.id);
     setShowEditServer(true);
   };
 
-  const handleUpdateServer = async (serverData?: any) => {
-    // serverData가 전달되면 그것을 사용하고, 아니면 editingServer 상태 사용
-    const dataToUpdate = serverData || editingServer;
-    
-    console.log("handleUpdateServer called with:", { editingServerId, dataToUpdate });
-    
-    if (!editingServerId) {
-      toast.error("서버 ID가 없습니다.");
-      return;
-    }
-
-    if (!dataToUpdate.name) {
-      toast.error("서버명을 입력해주세요.");
-      return;
-    }
-
-    const trimmedUpdateValue = dataToUpdate.value?.trim() || '';
-    if (!trimmedUpdateValue || trimmedUpdateValue === '{}') {
-      toast.error("MCP 설정을 입력해주세요.");
-      return;
-    }
-
-    try {
-      // JSON 유효성 검사
-      JSON.parse(trimmedUpdateValue);
-      
-      console.log("Updating server:", editingServerId, "with data:", dataToUpdate);
-      const result = await (window.electronAPI as any).updateMCPServer(editingServerId, dataToUpdate);
-      
-      if (result.success) {
-        console.log("Server updated successfully:", result.server);
-        toast.success("서버가 수정되었습니다.");
-        setEditingServer(null);
-        setEditingServerId('');
-        setShowEditServer(false);
-        await loadData();
-      } else {
-        console.error("Failed to update server:", result.error);
-        toast.error(`서버 수정 실패: ${result.error}`);
-      }
-    } catch (error) {
-      console.error("Error updating server:", error);
-      if (error instanceof SyntaxError) {
-        toast.error("유효하지 않은 JSON 형식입니다.");
-      } else {
-        toast.error("서버 수정 중 오류가 발생했습니다.");
-      }
-    }
-  };
 
   const handleDeleteServer = async (server: MCPServer) => {
     if (!server.id) {
@@ -170,7 +69,7 @@ const ServerManagement = () => {
     try {
       setIsDeleting(true);
       console.log("Deleting server:", deletingServer.id);
-      const result = await (window.electronAPI as any).deleteMCPServer(deletingServer.id);
+      const result = await window.electronAPI.deleteMCPServer(deletingServer.id);
       
       if (result.success) {
         console.log("Server deleted successfully");
@@ -191,8 +90,11 @@ const ServerManagement = () => {
   };
   
   const openServerModal = () => {
-    setNewServer({ name: '', value: '{}' });
     setShowAddServer(true);
+  };
+
+  const handleModalSuccess = async () => {
+    await loadData();
   };
 
   return (
@@ -283,9 +185,7 @@ const ServerManagement = () => {
       <ServerModal
         show={showAddServer}
         onHide={() => setShowAddServer(false)}
-        server={newServer}
-        onServerChange={setNewServer}
-        onSubmit={handleAddServer}
+        onSuccess={handleModalSuccess}
         title="새 MCP 서버 추가"
         submitLabel="추가"
       />
@@ -299,12 +199,9 @@ const ServerManagement = () => {
             setEditingServer(null);
             setEditingServerId('');
           }}
-          server={editingServer}
-          onServerChange={(server) => {
-            console.log('ServerModal onServerChange called with:', server);
-            setEditingServer(server);
-          }}
-          onSubmit={handleUpdateServer}
+          editingServer={editingServer}
+          editingServerId={editingServerId}
+          onSuccess={handleModalSuccess}
           title="서버 편집"
           submitLabel="수정"
         />

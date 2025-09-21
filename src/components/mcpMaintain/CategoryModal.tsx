@@ -28,16 +28,12 @@ const CategoryModal = ({
   useEffect(() => {
     const loadTargets = async () => {
       try {
-        if (typeof (window.electronAPI as any).getMCPStore !== 'function') {
-          console.warn('MCP Store API not available');
-          return;
-        }
 
-        const storeData = await (window.electronAPI as any).getMCPStore();
+        const storeData = await window.electronAPI.getMCPStore();
         if (storeData) {
           const targets = Object.values(storeData.configTargets || {})
-            .filter((target: any) => !target.delYn)
-            .sort((a: any, b: any) => a.name.localeCompare(b.name)) as MCPConfigTarget[];
+            .filter((target: MCPConfigTarget) => !target.delYn)
+            .sort((a: MCPConfigTarget, b: MCPConfigTarget) => a.name.localeCompare(b.name));
           
           setAvailableTargets(targets);
         }

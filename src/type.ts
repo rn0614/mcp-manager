@@ -116,15 +116,17 @@ interface MCPStore {
 
 // 유틸리티 타입들
 type CreateMCPServer = Omit<MCPServer, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
-type CreateMCPCategory = Omit<MCPCategory, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
-type CreateMCPConfigTarget = Omit<MCPConfigTarget, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
-type CreateCategoryServerRelation = Omit<CategoryServerRelation, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
-type CreateServerKeyRelation = Omit<ServerKeyRelation, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
-
-// 업데이트용 타입들 (부분 업데이트)
 type UpdateMCPServer = Partial<Omit<MCPServer, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>>;
+
+
+type CreateMCPCategory = Omit<MCPCategory, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
 type UpdateMCPCategory = Partial<Omit<MCPCategory, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>>;
+
+
+type CreateMCPConfigTarget = Omit<MCPConfigTarget, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
 type UpdateMCPConfigTarget = Partial<Omit<MCPConfigTarget, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>>;
+
+type CreateCategoryServerRelation = Omit<CategoryServerRelation, 'id' | 'version' | 'delYn' | 'createdAt' | 'updatedAt'>;
 
 export type { 
   PageType, 
@@ -141,7 +143,6 @@ export type {
   CreateMCPCategory,
   CreateMCPConfigTarget,
   CreateCategoryServerRelation,
-  CreateServerKeyRelation,
   UpdateMCPServer,
   UpdateMCPCategory,
   UpdateMCPConfigTarget

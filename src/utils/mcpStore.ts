@@ -10,7 +10,6 @@ import type {
   CreateMCPCategory,
   CreateMCPConfigTarget,
   CreateCategoryServerRelation,
-  CreateServerKeyRelation,
   UpdateMCPServer,
   UpdateMCPCategory,
   UpdateMCPConfigTarget
@@ -99,11 +98,6 @@ export const createCategoryServerRelation = (data: CreateCategoryServerRelation)
   ...createCommonFields()
 });
 
-// 서버-키 관계 생성
-export const createServerKeyRelation = (data: CreateServerKeyRelation): ServerKeyRelation => ({
-  ...data,
-  ...createCommonFields()
-});
 
 // 서버 업데이트
 export const updateServer = (server: MCPServer, updates: UpdateMCPServer): MCPServer => ({
@@ -195,32 +189,6 @@ export const addServerToCategory = (
   };
 };
 
-// 서버에 키 연결
-export const addKeyToServer = (
-  store: MCPStore,
-  serverId: string,
-  keyId: string,
-  keyName: string
-): MCPStore => {
-  const relationId = generateId();
-  const relation = createServerKeyRelation({
-    serverId,
-    keyId,
-    keyName
-  });
-
-  return {
-    ...store,
-    serverKeyRelations: {
-      ...store.serverKeyRelations,
-      [relationId]: relation
-    },
-    metadata: {
-      ...store.metadata,
-      lastUpdated: new Date()
-    }
-  };
-};
 
 // 활성 카테고리 가져오기 (동적 타겟 지원)
 export const getActiveCategory = (store: MCPStore, target: string): MCPCategory | null => {

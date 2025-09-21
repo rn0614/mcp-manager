@@ -38,9 +38,7 @@ const CategoryManagement = ({}: CategoryManagementProps) => {
 
     // 백엔드에 저장
     try {
-      if (window.electronAPI && (window.electronAPI as any).setSelectedTarget) {
-        await (window.electronAPI as any).setSelectedTarget(newTarget);
-      }
+      await window.electronAPI.setSelectedTarget(newTarget);
     } catch (error) {
       console.error("Error saving selected target:", error);
     }
@@ -103,9 +101,7 @@ const CategoryManagement = ({}: CategoryManagementProps) => {
       await loadData();
 
       // 트레이 메뉴 업데이트
-      if (window.electronAPI && (window.electronAPI as any).updateTrayMenu) {
-        (window.electronAPI as any).updateTrayMenu();
-      }
+      window.electronAPI.updateTrayMenu();
 
       // 저장 성공 후 모달 닫기
       onCloseModal();
@@ -147,7 +143,9 @@ const CategoryManagement = ({}: CategoryManagementProps) => {
         <Card.Header>
           <CategoryCreator onCreateCategory={createCategory} />
         </Card.Header>
-        <Card.Body style={{ maxHeight: '500px', overflowY: 'auto', padding: '0' }}>
+        <Card.Body
+          style={{ maxHeight: "500px", overflowY: "auto", padding: "0" }}
+        >
           <CategoryList
             categories={categories}
             servers={servers}

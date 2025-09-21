@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadSettings: () => ipcRenderer.invoke('settings:load'),
   
   // MCP 설정 파일 API
-  readMCPConfig: (filePath) => ipcRenderer.invoke('mcp:readConfig', filePath),
+  getMCPConfig: (filePath) => ipcRenderer.invoke('mcp:readConfig', filePath),
   writeMCPConfig: (filePath, config) => ipcRenderer.invoke('mcp:writeConfig', filePath, config),
   
   // MCP Store API

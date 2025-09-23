@@ -1,49 +1,47 @@
 ## 해결하고자 한 문제
-사용하는 MCP가 늘어나면서 모든 컨텍스트에서 통용되지 않고 일부 상황에서만 쓰는 MCP가 존재함.
-수동으로 MCP설정에 추가/삭제하는 것에 대한 부담감이 늘어나고 있음.
+사용하는 MCP가 늘어나면서 MCP를 항상켜놓으면 잘못된 MCP를 사용하거나 일부 상황에서만 쓰는 MCP가 겹치면서 잘못된 사용이 존재함.
+수동으로 MCP설정에 추가/삭제하는 것에 대한 부담이 있음.
 이를 해결하기 위해서 카테고리를 통해 MCP서버를 효율적으로 관리하는 프로그램을 제작하였음.
-특히, 나의 경우는 Blender, n8n, figma 등도 같이 사용하는데 이런 도구들은 claude나 cursor에서 사용할때 변환하기 매우 불편함.
+특히, 나의 경우는 Blender, n8n, figma 등도 같이 사용하는데 blender를 사용할 땐 claude-desktop에서 blender-desktop만 사용해야하는데 따른 키를 사용하는 문제가 발생하고 있음.
 
 ## 핵심 기능
-- 어플리케이션 단에서 설정 조작.
+- 설정단 : mcp를 사용하는 ide나 응용프로그램의 mcp를 저장하는 경로 설정(vscode, cursor, claude-desktop 등 )
+- 서버단 : 사용하는 mcp서버를 모음
+- 카테고리단 : mcp들의 그룹별 카테고리 작성
 - SYSTEM TRAY를 통해서 손쉽게 변형가능
 
 ## 사용방법
+### 0. 프로젝트 다운로드 후 빌드
+```bash
+npm install
+npm run electron-dev
+```
+실행시 dist-electron에서 MCP Manager.exe 파일생성됨
+
+
 ### 1. MCP를 사용하는 프로그램에 대한 경로 설정
 > 아래는 자주 사용하는 cursor와 claude_desktop 의 설정 json위치를 파일경로로 정의
 > 우측 상단 mcp설정 클릭, 이후 새 타겟추가 하고 표시명(영문) 으로 작성
+> <img width="479" height="639" alt="image" src="https://github.com/user-attachments/assets/6b0b29ea-44a7-4709-aba1-31c80aa7b061" />
+
 
 ### 2. MCP를 사용하는 프로그램에 대한 경로 설정
-**2-1. json에서 한번에 가져오기**
- 카테고리 가져오기란에서 json 설정파일을 붙여넣고 설정분석 클릭
-<img width="838" height="728" alt="20250915130926EVZE-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/459bd2e8-a0dc-4561-9a90-3fc083d57a57" />
-
-
- 밑에 쓰던 mcp에 대한 내용을 분석해서 가져옴.
- 카테고리 생성 클릭시 신규 카테고리 생성
-<img width="822" height="887" alt="20250915130926RkMN-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/e392c78f-cf9a-4f7c-8b6a-f74c6081aea6" />
-
-
-<img width="821" height="918" alt="20250915130926SDeU-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/7ab27e5a-da3f-4be4-9b8d-e3eb97f91209" />
-
-
-
-### 2-2. 각자 생성
+### 2-1. 각자 생성
 서버 관리에서 서버 추가 하여 개별생성
-<img width="817" height="822" alt="20250915130926yUKf-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/05fcea34-e33f-4b56-aaf1-411189edfcdf" />
+<img width="479" height="610" alt="image" src="https://github.com/user-attachments/assets/7a897600-8b8b-49c3-82ea-b06baf41a375" />
 
 
-카테고리 관리에서 신규 카테고리 추가 생성
-<img width="824" height="905" alt="20250915130926CSmm-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/2f866dee-25c3-4bf3-92b3-47cfa01a343d" />
 
-
+카테고리 관리에서 신규 카테고리 추가 생성 / 카테고리 추가
 생성한 카테고리에서 서버를 추가 생성하기  
-<img width="799" height="921" alt="20250915130926kmNJ-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/55bcd3f6-b47e-408a-a01c-0c74d2a5b68f" />
+<img width="476" height="616" alt="image" src="https://github.com/user-attachments/assets/52857228-1ea6-4490-8b50-e043b715e06a" />
+
 
 
 
 ### 시스템 트레이 사용
-<img width="415" height="336" alt="20250915130927GKcK-MCP 관리 툴 프로그램" src="https://github.com/user-attachments/assets/69dfdbd0-8ac3-4c2c-b2d8-866ba0e7bfe4" />
+<img width="407" height="389" alt="화면 캡처 2025-09-20 221450" src="https://github.com/user-attachments/assets/ff3bc66e-adcd-42f3-9fd0-87d3fe8757ba" />
+
 
 
 
@@ -51,8 +49,7 @@
 ### claude-desktop 자동 재실행
 cluade-desktop의 경우 현재 바꿔도 바로 적용이 안된다.
 이것을 해결하기 위해 설정 변경시 claude-desktop이 켜져 있으면 claude-desktop이 자동으로 재부팅된다.
-
-![20250915130927HcZI-MCP 관리 툴 프로그램](https://github.com/user-attachments/assets/27478b1d-f5d2-46b8-b5c2-d975756b4bce)
+![Animation](https://github.com/user-attachments/assets/9912ece5-e7a1-4be3-990e-eac380756e65)
 
 
 **해결하는 문제:**

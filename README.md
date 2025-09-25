@@ -17,6 +17,7 @@ npm install
 npm run electron-dev
 ```
 실행시 dist-electron에서 MCP Manager.exe 파일생성됨
+<img width="679" height="647" alt="image" src="https://github.com/user-attachments/assets/145fa181-9183-4dc6-ab6e-bb50bb2ab7ab" />
 
 
 ### 1. MCP를 사용하는 프로그램에 대한 경로 설정
